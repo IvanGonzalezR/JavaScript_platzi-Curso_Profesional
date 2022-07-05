@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+</head>
+<body>
+   <script src="https://unpkg.com/fast-levenshtein@2.0.6/levenshtein.js"></script>
+   <script>
+      //proxy es parecido a getters y setters
+      //Usa un concepto que se llama traps: son interceptores de llamadas.
+
+      //Creemos un ejemplo donde interceptamos llamadas para leer una propiedad
+      //Si la propiedad existe, la regresamos
+      // Si no existe, entonces sugerimos una que pueda funcionar
+
+      //Para eso vamos a usar un algoritmo que se llama Levenshtein. (window.Levenshtein)
+      
+      const target ={
+         red: 'Rojo',
+         green: 'Verde',
+         blue: 'Azul',
+      }
+
+      const handler = {
+         get(obj, prop){
+
+            if(prop in obj){
+               return obj[prop] //Si la propiedad existe, regresamos el valor
+            }
+
+            const suggestion = Object.keys(obj).find(key => {
+               return Levenshtein.get(key, prop) < 3 //Si no existe, buscamos una que tenga una distancia de 3 o menos);
+            })
+
+            if(suggestion){
+               console.log(`Did you mean '${suggestion}'?`);
+            }
+            return obj[prop];
+         }
+      };
+
+      //target es el objeto que queremos interceptar
+      const p = new Proxy(target, handler)
+
+   </script>
+</body>
+</html>
